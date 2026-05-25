@@ -210,6 +210,24 @@ export default function ChatbotWidget() {
         throw new Error(errMsg);
       }
 
+      // Check if response is standard JSON (such as Vercel serverless / non-streaming backends)
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const data = await response.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMsgId
+              ? { ...msg, content: data.reply || "I was unable to retrieve a response at this time." }
+              : msg
+          )
+        );
+        setIsLoading(false);
+        return;
+      }
+
       if (!response.body) {
         throw new Error("Streaming body not accessible");
       }
@@ -262,14 +280,25 @@ export default function ChatbotWidget() {
       }
     } catch (err) {
       console.error(err);
-      const errMsg = err instanceof Error ? err.message : String(err);
-      // Remove the blank placeholder and show detailed errors
+      let errMsg = err instanceof Error ? err.message : String(err);
+      
+      const isApiKeyError = 
+        errMsg.toLowerCase().includes("gemini_api_key") || 
+        errMsg.toLowerCase().includes("api key") || 
+        errMsg.toLowerCase().includes("apikey") ||
+        errMsg.toLowerCase().includes("api_key");
+
+      const displayMsg = isApiKeyError
+        ? "I cannot connect to the AI model because the GEMINI_API_KEY environment variable is not configured on your live hosting server.\n\nTo fix this:\n1. Open your hosting panel (e.g. Vercel Dashboard).\n2. Navigate to your project -> Settings -> Environment Variables.\n3. Add a new variable with key GEMINI_API_KEY and paste your Google Gemini API Key as the value.\n4. Save it and trigger a Redeploy of your project."
+        : `I couldn't generate a response. Error: ${errMsg}. Please feel free to retry or contact Keyur Kalathiya directly!`;
+
+      // Remove the blank placeholder and show detailed errorsetailed errors
       setMessages((prev) => [
         ...prev.filter((m) => m.id !== assistantMsgId),
         {
           id: `err-${Date.now()}`,
           role: "assistant",
-          content: `I couldn't generate a response. Error: ${errMsg}. Please ensure your GEMINI_API_KEY is configured in the AI Studio Settings secrets tab or that you have an internet connection.`,
+          content: displayMsg,
         },
       ]);
     } finally {
