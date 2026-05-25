@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { MessageSquare, X, Send, Sparkles, RefreshCw, ChevronDown, Check, User, Bot, CornerDownLeft, Settings } from "lucide-react";
+import { getLocalReply } from "../utils/localReply";
 
 interface Message {
   id: string;
@@ -293,28 +294,32 @@ export default function ChatbotWidget() {
         }
       }
     } catch (err) {
-      console.error(err);
-      let errMsg = err instanceof Error ? err.message : String(err);
+      console.error("Chatbot API error, falling back to local portfolio system:", err);
       
-      const isApiKeyError = 
-        errMsg.toLowerCase().includes("gemini_api_key") || 
-        errMsg.toLowerCase().includes("api key") || 
-        errMsg.toLowerCase().includes("apikey") ||
-        errMsg.toLowerCase().includes("api_key");
-
-      const displayMsg = isApiKeyError
-        ? "I cannot connect to the AI model because the GEMINI_API_KEY environment variable is not configured on your live hosting server.\n\nTo fix this:\n1. Open your hosting panel (e.g. Vercel Dashboard).\n2. Navigate to your project -> Settings -> Environment Variables.\n3. Add a new variable with key **GEMINI_API_KEY** and paste your Google Gemini API Key as the value.\n4. Save it and trigger a Redeploy of your project.\n\n💡 **Alternatively**, click the ⚙️ (Settings) button in the header of this chatbot window and paste your Google Gemini API Key to chat instantly!"
-        : `I couldn't generate a response. Error: ${errMsg}. Please feel free to retry or contact Keyur Kalathiya directly!`;
-
-      // Remove the blank placeholder and show detailed errors
-      setMessages((prev) => [
-        ...prev.filter((m) => m.id !== assistantMsgId),
-        {
-          id: `err-${Date.now()}`,
-          role: "assistant",
-          content: displayMsg,
-        },
-      ]);
+      // Retrieve the response from local portfolio rules for Keyur Kalathiya
+      const localAnswer = getLocalReply(textToSend);
+      
+      // Deactivate global loader dot indicators and simulate custom typing/streaming interface
+      setIsLoading(false);
+      let currentLocText = "";
+      const words = localAnswer.split(/\s+/);
+      let wordIdx = 0;
+      
+      const typingTimer = setInterval(() => {
+        if (wordIdx < words.length) {
+          currentLocText += (wordIdx === 0 ? "" : " ") + words[wordIdx];
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantMsgId
+                ? { ...msg, content: currentLocText }
+                : msg
+            )
+          );
+          wordIdx++;
+        } else {
+          clearInterval(typingTimer);
+        }
+      }, 15);
     } finally {
       setIsLoading(false);
     }
