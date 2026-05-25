@@ -94,7 +94,7 @@ CERTIFICATIONS:
 - If Asked to hire or contact Keyur: Provide his details such as email keyurkalathiya121@gmail.com, phone +91 9510703901, and suggest clicking "Hire Me" or writing in the contact form to connect immediately over Email/WhatsApp.
 - Ground all facts in the above text. Do not invent details not specified here (e.g., other jobs he didn't do, or incorrect certifications). If asked about something not covered, politely say that you don't have that specific data, but they can reach out to Keyur directly to ask! Please use Markdown formatting for responses (bullet points, italicization, brave headers).`;
 
-// Unified route for chatbot interactions
+// Unified route for chatbot interactions with streaming support
 app.post("/api/chat", async (req, res) => {
   try {
     const { messages } = req.body;
@@ -113,7 +113,12 @@ app.post("/api/chat", async (req, res) => {
       };
     });
 
-    const response = await ai.models.generateContent({
+    // Request Headers for Streaming
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const responseStream = await ai.models.generateContentStream({
       model: "gemini-3.5-flash",
       contents: formattedContents,
       config: {
@@ -122,10 +127,21 @@ app.post("/api/chat", async (req, res) => {
       },
     });
 
-    res.json({ reply: response.text || "I was unable to generate a response at this time." });
+    for await (const chunk of responseStream) {
+      if (chunk.text) {
+        res.write(`data: ${JSON.stringify({ text: chunk.text })}\n\n`);
+      }
+    }
+    res.write("data: [DONE]\n\n");
+    res.end();
   } catch (error: any) {
     console.error("Error in /api/chat route:", error);
-    res.status(500).json({ error: error?.message || "Internal Server Error" });
+    if (!res.headersSent) {
+      res.status(500).json({ error: error?.message || "Internal Server Error" });
+    } else {
+      res.write(`data: ${JSON.stringify({ error: error?.message || "Internal Server Error" })}\n\n`);
+      res.end();
+    }
   }
 });
 

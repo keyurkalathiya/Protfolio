@@ -114,7 +114,7 @@ export default function TestimonialsSection() {
     const list = [];
     for (let i = 0; i < visibleCount; i++) {
       const idx = (currentIndex + i) % testimonials.length;
-      list.push({ ...testimonials[idx], displayIndex: idx });
+      list.push({ ...testimonials[idx], slotIndex: i });
     }
     return list;
   };
@@ -131,7 +131,7 @@ export default function TestimonialsSection() {
       <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-violet-900/5 blur-[150px] pointer-events-none" />
       <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#FF5CE2]/10 to-transparent" />
 
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-7xl mx-auto relative px-1">
         
         {/* Modern styled displays segment */}
         <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -170,67 +170,67 @@ export default function TestimonialsSection() {
         </div>
 
         {/* Dynamic Multi-Card Rotating Grid Layout */}
-        <div className="relative min-h-[420px]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <AnimatePresence mode="popLayout">
-              {activeTestimonials.map((test, index) => (
-                <motion.div
-                  key={test.id}
-                  layout
-                  initial={{ opacity: 0, x: 50, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -50, scale: 0.95 }}
-                  transition={{ 
-                    duration: 0.5, 
-                    ease: "easeInOut",
-                    layout: { type: "spring", stiffness: 120, damping: 20 }
-                  }}
-                  className="bg-[#101014] border border-white/5 hover:border-[#FF5CE2]/30 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group transition-all duration-300 shadow-2xl min-h-[380px]"
-                >
-                  {/* Glowing subtle radial gradient backdrop on hover */}
-                  <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#B600A8]/5 rounded-full blur-3xl group-hover:bg-[#B600A8]/10 transition-colors pointer-events-none" />
-                  
-                  {/* Floating double quotes decorative element */}
-                  <div className="absolute top-6 right-6 text-white/[0.01] group-hover:text-white/[0.03] select-none pointer-events-none transition-colors">
-                    <Quote className="w-20 h-20 transform rotate-180" />
-                  </div>
+        <div className="relative min-h-[420px] w-full flex justify-center">
+          <div className="flex flex-wrap items-center justify-center gap-6 w-full max-w-7xl">
+            {activeTestimonials.map((test) => (
+              <div
+                key={test.slotIndex}
+                className="relative min-h-[380px] w-full max-w-[285px] sm:max-w-[320px] md:max-w-[280px] lg:max-w-[290px] xl:max-w-[275px] shrink-0"
+              >
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={test.id}
+                    initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -15, scale: 0.98 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="bg-[#101014] border border-white/5 hover:border-[#FF5CE2]/30 rounded-3xl p-6 sm:p-8 flex flex-col justify-between absolute inset-0 group transition-all duration-300 shadow-2xl"
+                  >
+                    {/* Glowing subtle radial gradient backdrop on hover */}
+                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#B600A8]/5 rounded-full blur-3xl group-hover:bg-[#B600A8]/10 transition-colors pointer-events-none" />
+                    
+                    {/* Floating double quotes decorative element */}
+                    <div className="absolute top-6 right-6 text-white/[0.01] group-hover:text-white/[0.03] select-none pointer-events-none transition-colors">
+                      <Quote className="w-20 h-20 transform rotate-180" />
+                    </div>
 
-                  {/* Header containing ratings and validation details */}
-                  <div className="relative z-10 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-1">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                          <Star key={s} className="w-4 h-4 text-amber-500 fill-amber-500" />
-                        ))}
+                    {/* Header containing ratings and validation details */}
+                    <div className="relative z-10 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star key={s} className="w-4 h-4 text-amber-500 fill-amber-500" />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Testimonial review speech block */}
+                      <div className="pt-2">
+                        <p className="text-[#D7E2EA]/80 text-xs sm:text-sm leading-relaxed font-light italic font-sans group-hover:text-white transition-colors duration-200">
+                          "{test.quote}"
+                        </p>
                       </div>
                     </div>
 
-                    {/* Testimonial review speech block */}
-                    <div className="pt-2">
-                      <p className="text-[#D7E2EA]/80 text-xs sm:text-sm leading-relaxed font-light italic font-sans group-hover:text-white transition-colors duration-200">
-                        "{test.quote}"
-                      </p>
+                    {/* Footer profile block */}
+                    <div className="relative z-10 pt-6 mt-6 border-t border-white/5 flex items-center gap-3 shrink-0">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-[#B600A8]/20 bg-[#B600A8]/5 text-[#FF5CE2] font-black text-xs uppercase select-none group-hover:border-[#FF5CE2]/40 transition-all">
+                        {test.name.replace("MR. ", "").replace("DR. ", "").charAt(0)}
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-extrabold text-white uppercase tracking-tight text-xs sm:text-sm group-hover:text-[#FF5CE2] transition-colors truncate">
+                          {test.name}
+                        </h4>
+                        <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[#D7E2EA]/50 font-semibold font-mono mt-0.5 truncate">
+                          {test.role}
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Footer profile block */}
-                  <div className="relative z-10 pt-6 mt-6 border-t border-white/5 flex items-center gap-3 shrink-0">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-[#B600A8]/20 bg-[#B600A8]/5 text-[#FF5CE2] font-black text-xs uppercase select-none group-hover:border-[#FF5CE2]/40 transition-all">
-                      {test.name.replace("MR. ", "").replace("DR. ", "").charAt(0)}
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="font-extrabold text-white uppercase tracking-tight text-xs sm:text-sm group-hover:text-[#FF5CE2] transition-colors truncate">
-                        {test.name}
-                      </h4>
-                      <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[#D7E2EA]/50 font-semibold font-mono mt-0.5 truncate">
-                        {test.role}
-                      </p>
-                    </div>
-                  </div>
-
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            ))}
           </div>
         </div>
 

@@ -41,13 +41,13 @@ export default function HeroSection({ onOpenContact }: HeroSectionProps) {
       </div>
 
       {/* 3. HERO HEADING */}
-      <div className="flex-1 flex flex-col justify-center items-center z-20">
-        <div className="overflow-hidden w-full flex justify-center">
+      <div className="flex-1 flex flex-col justify-center items-center z-20 w-full overflow-hidden px-[3vw]">
+        <div className="w-full flex justify-center overflow-visible">
           <FadeIn
             as="h1"
             delay={0.15}
             y={40}
-            className="hero-heading text-[14vw] sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw] font-black uppercase tracking-tight leading-none text-center whitespace-nowrap w-full mt-6 sm:mt-4 md:-mt-5 select-none"
+            className="hero-heading text-[12.8vw] sm:text-[13.8vw] md:text-[14.5vw] lg:text-[15.2vw] font-black uppercase tracking-tighter leading-none text-center select-none w-full mt-6 sm:mt-4 md:-mt-5 pt-2 whitespace-nowrap overflow-visible pr-[0.3em]"
           >
             Hi, i&apos;m keyur
           </FadeIn>

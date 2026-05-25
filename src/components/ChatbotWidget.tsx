@@ -114,13 +114,44 @@ export default function ChatbotWidget() {
   const [hasNewMessages, setHasNewMessages] = useState(true);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+  const lastScrolledIdRef = useRef<string | null>(null);
 
   // Auto-scroll on new messages
   useEffect(() => {
-    if (messagesEndRef.current) {
+    if (messages.length > 1) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg.role === "assistant") {
+        // Scroll to the start/top position of the new assistant message once
+        if (lastScrolledIdRef.current !== lastMsg.id) {
+          if (lastMessageRef.current && messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTo({
+              top: lastMessageRef.current.offsetTop - 12,
+              behavior: "smooth"
+            });
+            lastScrolledIdRef.current = lastMsg.id;
+          }
+        }
+      } else {
+        // Scroll to the absolute bottom for user's own sent message
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    } else {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [messages]);
+
+  // Handle active loading dots view visibility
+  useEffect(() => {
+    if (isLoading && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isLoading]);
+  }, [isLoading]);
 
   // Handle message sending
   const handleSendMessage = async (textToSend: string) => {
@@ -132,12 +163,22 @@ export default function ChatbotWidget() {
       content: textToSend,
     };
 
-    setMessages((prev) => [...prev, userMsg]);
     setInputValue("");
     setIsLoading(true);
 
+    // Prepare placeholder assistant message
+    const assistantMsgId = `ai-${Date.now()}`;
+    const placeholderAssistantMsg: Message = {
+      id: assistantMsgId,
+      role: "assistant",
+      content: "",
+    };
+
+    // Update messages to include user message and starting placeholder
+    setMessages((prev) => [...prev, userMsg, placeholderAssistantMsg]);
+
     try {
-      // Map entire history for context continuity
+      // Map entire history for context continuity (excluding the last empty prompt placeholder)
       const apiPayload = {
         messages: [...messages, userMsg].map((m) => ({
           role: m.role,
@@ -153,23 +194,82 @@ export default function ChatbotWidget() {
         body: JSON.stringify(apiPayload),
       });
 
-      const data = await response.json();
-      
-      const assistantMsg: Message = {
-        id: `ai-${Date.now()}`,
-        role: "assistant",
-        content: data.reply || "I encountered a minor lag loop, could you try again?",
-      };
+      if (!response.ok) {
+        const errText = await response.text();
+        let errMsg = "Brain server returned an error";
+        try {
+          const parsedJSON = JSON.parse(errText);
+          if (parsedJSON.error) {
+            errMsg = parsedJSON.error;
+          }
+        } catch (_) {
+          if (errText) {
+            errMsg = errText;
+          }
+        }
+        throw new Error(errMsg);
+      }
 
-      setMessages((prev) => [...prev, assistantMsg]);
+      if (!response.body) {
+        throw new Error("Streaming body not accessible");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let done = false;
+      let buffer = "";
+
+      setIsLoading(false); // remove loader dots as soon as stream starts
+
+      while (!done) {
+        const { value, done: readerDone } = await reader.read();
+        done = readerDone;
+        if (value) {
+          buffer += decoder.decode(value, { stream: !done });
+          // Split into lines (either \r\n or \n) to handle SSE chunks robustly
+          const lines = buffer.split(/\r?\n/);
+          // Keep the last incomplete line in buffer
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || !trimmed.startsWith("data: ")) continue;
+            
+            const dataStr = trimmed.substring(6).trim();
+            if (dataStr === "[DONE]") {
+              break;
+            }
+
+            try {
+              const parsed = JSON.parse(dataStr);
+              if (parsed.error) {
+                throw new Error(parsed.error);
+              }
+              if (parsed.text) {
+                setMessages((prev) =>
+                  prev.map((msg) =>
+                    msg.id === assistantMsgId
+                      ? { ...msg, content: msg.content + parsed.text }
+                      : msg
+                  )
+                );
+              }
+            } catch (e) {
+              console.error("Error processing stream line:", e, dataStr);
+            }
+          }
+        }
+      }
     } catch (err) {
       console.error(err);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      // Remove the blank placeholder and show detailed errors
       setMessages((prev) => [
-        ...prev,
+        ...prev.filter((m) => m.id !== assistantMsgId),
         {
           id: `err-${Date.now()}`,
           role: "assistant",
-          content: "Sorry, I am having trouble connecting to my brain server. Please make sure the backend is active or try again soon!",
+          content: `I couldn't generate a response. Error: ${errMsg}. Please ensure your GEMINI_API_KEY is configured in the AI Studio Settings secrets tab or that you have an internet connection.`,
         },
       ]);
     } finally {
@@ -279,12 +379,14 @@ export default function ChatbotWidget() {
             </div>
 
             {/* Conversation Flow Area */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10">
-              {messages.map((m) => {
+            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10">
+              {messages.map((m, index) => {
                 const isAI = m.role === "assistant";
+                const isLast = index === messages.length - 1;
                 return (
                   <div
                     key={m.id}
+                    ref={isLast ? lastMessageRef : undefined}
                     className={`flex items-start gap-2.5 max-w-[85%] ${isAI ? "mr-auto" : "ml-auto flex-row-reverse"}`}
                   >
                     {/* Icon tag */}
