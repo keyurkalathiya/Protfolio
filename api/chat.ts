@@ -1,22 +1,19 @@
 import { GoogleGenAI } from "@google/genai";
 
-let genAIClient: GoogleGenAI | null = null;
-function getGenAI(): GoogleGenAI {
-  if (!genAIClient) {
-    const key = process.env.GEMINI_API_KEY;
-    if (!key) {
-      throw new Error("GEMINI_API_KEY environment variable is required");
-    }
-    genAIClient = new GoogleGenAI({
-      apiKey: key,
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
-        },
-      },
-    });
+function getGenAI(req: any): GoogleGenAI {
+  const userKey = req.headers["x-gemini-key"] || req.body?.userApiKey;
+  const key = userKey || process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.VITE_GOOGLE_API_KEY;
+  if (!key) {
+    throw new Error("GEMINI_API_KEY environment variable is required");
   }
-  return genAIClient;
+  return new GoogleGenAI({
+    apiKey: key,
+    httpOptions: {
+      headers: {
+        "User-Agent": "aistudio-build",
+      },
+    },
+  });
 }
 
 const KEYUR_CONTEXT = `You are a helpful portfolio intelligence AI assistant representing Keyur Kalathiya, designed to answer any questions about him, his credentials, skillset, research publications, projects, and educational achievements.
@@ -92,7 +89,7 @@ export default async function handler(req: any, res: any) {
       return res.status(400).json({ error: "Messages array is required." });
     }
 
-    const ai = getGenAI();
+    const ai = getGenAI(req);
 
     const formattedContents = messages.map((m: { role: string; content: string }) => {
       return {

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { MessageSquare, X, Send, Sparkles, RefreshCw, ChevronDown, Check, User, Bot, CornerDownLeft } from "lucide-react";
+import { MessageSquare, X, Send, Sparkles, RefreshCw, ChevronDown, Check, User, Bot, CornerDownLeft, Settings } from "lucide-react";
 
 interface Message {
   id: string;
@@ -112,6 +112,14 @@ export default function ChatbotWidget() {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasNewMessages, setHasNewMessages] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
+  const [apiKeyValue, setApiKeyValue] = useState<string>(() => {
+    try {
+      return localStorage.getItem("custom_gemini_api_key") || "";
+    } catch (_) {
+      return "";
+    }
+  });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -186,11 +194,17 @@ export default function ChatbotWidget() {
         })),
       };
 
+      const storedKey = localStorage.getItem("custom_gemini_api_key") || "";
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (storedKey) {
+        headers["x-gemini-key"] = storedKey;
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(apiPayload),
       });
 
@@ -289,10 +303,10 @@ export default function ChatbotWidget() {
         errMsg.toLowerCase().includes("api_key");
 
       const displayMsg = isApiKeyError
-        ? "I cannot connect to the AI model because the GEMINI_API_KEY environment variable is not configured on your live hosting server.\n\nTo fix this:\n1. Open your hosting panel (e.g. Vercel Dashboard).\n2. Navigate to your project -> Settings -> Environment Variables.\n3. Add a new variable with key GEMINI_API_KEY and paste your Google Gemini API Key as the value.\n4. Save it and trigger a Redeploy of your project."
+        ? "I cannot connect to the AI model because the GEMINI_API_KEY environment variable is not configured on your live hosting server.\n\nTo fix this:\n1. Open your hosting panel (e.g. Vercel Dashboard).\n2. Navigate to your project -> Settings -> Environment Variables.\n3. Add a new variable with key **GEMINI_API_KEY** and paste your Google Gemini API Key as the value.\n4. Save it and trigger a Redeploy of your project.\n\n💡 **Alternatively**, click the ⚙️ (Settings) button in the header of this chatbot window and paste your Google Gemini API Key to chat instantly!"
         : `I couldn't generate a response. Error: ${errMsg}. Please feel free to retry or contact Keyur Kalathiya directly!`;
 
-      // Remove the blank placeholder and show detailed errorsetailed errors
+      // Remove the blank placeholder and show detailed errors
       setMessages((prev) => [
         ...prev.filter((m) => m.id !== assistantMsgId),
         {
@@ -388,6 +402,14 @@ export default function ChatbotWidget() {
               </div>
 
               <div className="flex items-center gap-1.5">
+                {/* API Settings Gear */}
+                <button
+                  onClick={() => setShowSettings((prev) => !prev)}
+                  title="API Key Settings"
+                  className={`p-1 px-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 text-xs ${showSettings ? "text-[#FF5CE2] bg-white/10" : "text-white/50 hover:text-white hover:bg-white/5"}`}
+                >
+                  <Settings className="w-3.5 h-3.5" />
+                </button>
                 {/* Clear Session */}
                 <button
                   id="chatbot-reset-btn"
@@ -406,6 +428,55 @@ export default function ChatbotWidget() {
                 </button>
               </div>
             </div>
+
+            {/* API Settings Pane */}
+            {showSettings && (
+              <div className="bg-[#16161c] border-b border-white/5 p-3.5 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-white tracking-wide">Custom Gemini API Key</span>
+                  <span className="text-[9px] font-bold text-[#FF5CE2] uppercase tracking-wider bg-[#FF5CE2]/10 px-1.5 py-0.5 rounded border border-[#FF5CE2]/20">
+                    Local Storage
+                  </span>
+                </div>
+                <p className="text-[11px] text-white/60 leading-relaxed">
+                  To chat instantly without configuring Vercel environment variables, paste your personal Gemini API key here. It remains secure inside your local browser storage.
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="password"
+                    value={apiKeyValue}
+                    onChange={(e) => {
+                      const val = e.target.value.trim();
+                      setApiKeyValue(val);
+                      if (val) {
+                        try {
+                          localStorage.setItem("custom_gemini_api_key", val);
+                        } catch (_) {}
+                      } else {
+                        try {
+                          localStorage.removeItem("custom_gemini_api_key");
+                        } catch (_) {}
+                      }
+                    }}
+                    placeholder="AI_... (Gemini API Key)"
+                    className="flex-1 px-2.5 py-1.5 text-xs bg-black/40 border border-white/10 rounded-lg outline-none focus:border-[#B600A8]/50 text-white placeholder-white/20 select-text"
+                  />
+                  {apiKeyValue && (
+                    <button
+                      onClick={() => {
+                        setApiKeyValue("");
+                        try {
+                          localStorage.removeItem("custom_gemini_api_key");
+                        } catch (_) {}
+                      }}
+                      className="px-2.5 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg transition-all text-[11px] font-medium cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Conversation Flow Area */}
             <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10">

@@ -12,23 +12,20 @@ const PORT = 3000;
 app.use(express.json());
 
 // Lazy client setup
-let genAIClient: GoogleGenAI | null = null;
-function getGenAI(): GoogleGenAI {
-  if (!genAIClient) {
-    const key = process.env.GEMINI_API_KEY;
-    if (!key) {
-      throw new Error("GEMINI_API_KEY environment variable is required");
-    }
-    genAIClient = new GoogleGenAI({
-      apiKey: key,
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
-        },
-      },
-    });
+function getGenAI(req: any): GoogleGenAI {
+  const userKey = req.headers["x-gemini-key"] || req.body?.userApiKey;
+  const key = userKey || process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.VITE_GOOGLE_API_KEY;
+  if (!key) {
+    throw new Error("GEMINI_API_KEY environment variable is required");
   }
-  return genAIClient;
+  return new GoogleGenAI({
+    apiKey: key,
+    httpOptions: {
+      headers: {
+        "User-Agent": "aistudio-build",
+      },
+    },
+  });
 }
 
 // Background data about Keyur Kalathiya
@@ -102,7 +99,7 @@ app.post("/api/chat", async (req, res) => {
       return res.status(400).json({ error: "Messages array is required." });
     }
 
-    const ai = getGenAI();
+    const ai = getGenAI(req);
 
     // Reformat incoming chat array for GenAI SDK
     // Mapping: role "assistant" -> "model"
