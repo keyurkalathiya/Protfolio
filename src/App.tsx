@@ -10,9 +10,11 @@ import Footer from "./components/Footer";
 import ContactFormModal from "./components/ContactFormModal";
 import ChatbotWidget from "./components/ChatbotWidget";
 import Navbar from "./components/Navbar";
+import ResumeDownloadModal from "./components/ResumeDownloadModal";
 
 export default function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [preSelectedService, setPreSelectedService] = useState("Full-Stack Dev");
 
   // Open contact form handler for the floating interactive modal
@@ -32,7 +34,7 @@ export default function App() {
       <HeroSection onOpenContact={(service) => handleOpenContact(service)} />
 
       {/* 2. ABOUT ME SECTION */}
-      <AboutMeSection />
+      <AboutMeSection onOpenResume={() => setIsResumeOpen(true)} />
 
       {/* 3. SKILLS & TECH STACK SECTION */}
       <SkillsSection />
@@ -57,6 +59,12 @@ export default function App() {
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
         initialService={preSelectedService}
+      />
+
+      {/* --- COMPILABLE ATS RESUME PERSONALIZER MODAL --- */}
+      <ResumeDownloadModal
+        isOpen={isResumeOpen}
+        onClose={() => setIsResumeOpen(false)}
       />
 
       {/* --- PORTFOLIO INTELLIGENCE AI CHATBOT --- */}

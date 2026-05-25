@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   Download, Sparkles, User, BadgeCheck, Award, ExternalLink, 
   GraduationCap, MapPin, Briefcase, FileCode, CheckCircle2, 
-  ArrowRight, BookOpen, Brain, Terminal, Code2, Heart 
+  ArrowRight, BookOpen, Brain, Terminal, Code2, Heart, Languages 
 } from "lucide-react";
 import FadeIn from "./FadeIn";
 
@@ -17,7 +17,11 @@ interface Certification {
   verifyUrl: string;
 }
 
-export default function AboutMeSection() {
+interface AboutMeSectionProps {
+  onOpenResume: () => void;
+}
+
+export default function AboutMeSection({ onOpenResume }: AboutMeSectionProps) {
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
 
   const skillsList = [
@@ -80,86 +84,7 @@ export default function AboutMeSection() {
   ];
 
   const handleDownloadResume = () => {
-    const resumeText = `================================================================================
-KEYUR KALATHIYA
-AI-Powered Full Stack Developer | NLP & Machine Learning Enthusiast
-================================================================================
-Location:  Surat, Gujarat, India
-Email:     keyurkalathiya121@gmail.com
-Phone:     +91 9510703901
-LinkedIn:  https://linkedin.com/in/keyurkalathiya-871451330
-GitHub:    https://github.com/keyurkalathiya
-
-PROFESSIONAL SUMMARY
---------------------
-Motivated and detail-oriented Computer Science graduate student with strong foundations in PHP, Python, Java, and full-stack web development. Published researcher with hands-on experience in machine learning and data structures. Proficient in AI-assisted development using tools like Claude and ChatGPT to accelerate coding, debugging, and problem-solving workflows. Eager to contribute technical skills and a problem-solving mindset to a high-impact IT or software engineering role.
-
-EDUCATION
----------
-P P Savani University - Surat, Gujarat, India
-Master of Science (M.Sc.) in Computer Science (August 2024 - June 2026)
-Coursework: Advanced Algorithms, Machine Learning, Database Systems, Software Engineering, Statistical Modeling
-
-Veer Narmad South Gujarat University (VNSGU) - Surat, Gujarat, India
-Bachelor of Computer Applications (BCA) - CS & IT (June 2019 - June 2022)
-Coursework: Data Structures, Object-Oriented Programming, Web Technologies, Operating Systems, Relational Database Management
-
-TECHNICAL SKILLS
-----------------
-* Programming Languages: Python, PHP, Core Java, JavaScript, HTML5, CSS3, SQL
-* Web Development: PHP Backend, RESTful APIs, Responsive Web Design
-* Machine Learning & Data Science: Scikit-learn, NumPy, Pandas, Data Structures & Algorithms
-* Databases: MySQL, SQL
-* Tools: Git, GitHub, VS Code, Rapid Prototyping
-* AI & AI Productivity: Claude, ChatGPT, GitHub Copilot, Prompt Engineering, AI-Assisted Workflows
-
-RESEARCH & PUBLICATIONS
------------------------
-"Energy Efficiency of Machine Learning Algorithms: An Empirical Study"
-Published in: International Journal of Research Publication and Reviews (IJRPR) | Vol. 7, Issue 4, pp. 1720-1728
-Authors: Keyur Kalathiya, Subhashini. K | DOI: https://doi.org/10.55248/gengpi.07.0426.20830
-Key Milestones:
-- Designed and executed an empirical framework to benchmark energy consumption, GPU power usage, training duration, and carbon footprint (CO2 emissions) of deep learning architectures (BiLSTM, Transformer, Hybrid) on the IMDB dataset.
-- Showed Transformer achieved highest energy efficiency at 0.000653 kWh with the lowest carbon footprint (0.000535 kg CO2).
-- Formulated the "Energy Efficiency Score (EES)", a dual-axis metric that evaluates training accuracy relative to energy costs to empower engineering teams to build sustainable AI systems.
-
-SELECTED PROJECTS
------------------
-1. NLP-Based Movie Recommendation System
-   Technologies: Python, NLP, Pandas, Scikit-learn, Machine Learning
-   - Analyzes film datasets, executes automated data cleaning and feature engineering, and implements similarity matrices (Cosine Similarity, TF-IDF Vectorization) to map metadata correlations.
-
-2. Food & Vegetable eCommerce Website
-   Technologies: PHP, HTML, CSS, JavaScript, MySQL
-   - Built a responsive full-stack platform managing custom catalog registries. Designed normalized MySQL logical keys, product state controls, customer dashboard components, and dynamic ordering workflows.
-
-3. Blood Donation Management System
-   Technologies: PHP, MySQL, HTML5, CSS3, JavaScript
-   - Created an emergency blood donation network platform which matches localized emergency blood requirements with registered local donors in real time.
-
-CERTIFICATIONS
---------------
-1. Data Science Using Python
-   Swayam / AMU | Score: 86% | Recommended 3-4 institutional credits.
-2. Using Python to Access Web Data
-   University of Michigan (Coursera) | Authored by Dr. Charles Severance.
-3. Capstone: Retrieving, Processing, and Visualizing Data with Python
-   University of Michigan (Coursera) | Built end-to-end SQLite and D3.js visualization.
-4. Python Data Structures
-   University of Michigan (Coursera) | Implemented multi-key complex collections.
-5. Programming for Everybody (Getting Started with Python)
-   University of Michigan (Coursera) | Solved core nested logic operations.
-`;
-
-    const blob = new Blob([resumeText], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "Keyur_Kalathiya_Resume.txt");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    onOpenResume();
   };
 
   return (
@@ -239,7 +164,7 @@ CERTIFICATIONS
             </div>
 
             {/* Micro details grid inside bento narrative card */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-8 mt-8 border-t border-white/5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 mt-8 border-t border-white/5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-[#B600A8]">
                   <GraduationCap className="w-5 h-5" />
@@ -257,6 +182,16 @@ CERTIFICATIONS
                 <div>
                   <span className="text-[10px] text-white/40 uppercase font-black tracking-widest block">Base</span>
                   <span className="text-xs text-white/90 font-bold">Surat, Gujarat, India</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-[#B600A8]">
+                  <Languages className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[10px] text-white/40 uppercase font-black tracking-widest block">Languages</span>
+                  <span className="text-xs text-white/90 font-bold">English, Gujarati, Hindi</span>
                 </div>
               </div>
             </div>
@@ -424,6 +359,7 @@ CERTIFICATIONS
 
         </div>
 
+        
       </div>
     </section>
   );
