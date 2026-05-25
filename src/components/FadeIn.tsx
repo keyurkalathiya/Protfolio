@@ -14,6 +14,17 @@ interface FadeInProps {
   key?: any;
 }
 
+// Map to cache dynamically registered motion tags/elements.
+// Recreating motion components on every render resets React DOM elements, losing input focus and shifting viewport scroll.
+const motionComponentsCache = new Map<any, any>();
+
+function getMotionComponent(tag: any) {
+  if (!motionComponentsCache.has(tag)) {
+    motionComponentsCache.set(tag, motion.create(tag));
+  }
+  return motionComponentsCache.get(tag);
+}
+
 export default function FadeIn({
   children,
   delay = 0,
@@ -25,8 +36,8 @@ export default function FadeIn({
   id,
   style,
 }: FadeInProps) {
-  // Uses motion.create() for dynamic element types as requested
-  const MotionComponent = motion.create(as);
+  // Retrieve static motion-wrapped element type from the cache
+  const MotionComponent = getMotionComponent(as);
 
   return (
     <MotionComponent
