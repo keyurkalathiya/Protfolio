@@ -17,8 +17,26 @@ interface PortfolioProject {
 export default function ProjectsSection() {
   const projects: PortfolioProject[] = [
     {
-      id: "proj1",
+      id: "supercall-pro",
       number: "01",
+      title: "SUPERCALL PRO",
+      description: "AI-assisted web product developed using modern rapid-development workflows, with emphasis on product UI, responsive web implementation, and a production-facing user experience.",
+      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80",
+      tech: ["React.js", "TypeScript", "Tailwind CSS", "AI Integrations"],
+      liveUrl: "https://www.supercall.pro/"
+    },
+    {
+      id: "creatorcheck",
+      number: "02",
+      title: "CREATORCHECK",
+      description: "Creator-focused platform supporting creator discovery, fraud detection, campaign/ROI analysis, and data-driven workflows. Developed as an AI-assisted product using rapid application development practices.",
+      imageUrl: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=80",
+      tech: ["Python", "FastAPI", "React.js", "Data Analytics"],
+      liveUrl: "https://creatorcheck.org"
+    },
+    {
+      id: "proj3",
+      number: "03",
       title: "NLP MOVIE RECOMMENDATION",
       description: "Analyzes film datasets, executes automated data cleaning/feature engineering, and implements similarity matrices (Cosine Similarity, TF-IDF Vectorization) to map metadata correlations.",
       imageUrl: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop&q=80",
@@ -26,8 +44,8 @@ export default function ProjectsSection() {
       liveUrl: "https://github.com/keyurkalathiya/movie-recommender"
     },
     {
-      id: "proj2",
-      number: "02",
+      id: "proj4",
+      number: "04",
       title: "FOOD & VEG ECOMMERCE",
       description: "Built a responsive full-stack platform managing custom catalog registries. Designed normalized MySQL logical keys, product state controls, customer dashboard components, and dynamic ordering workflows.",
       imageUrl: "https://images.unsplash.com/photo-1506617564039-2f3b65017261?w=800&auto=format&fit=crop&q=80",
@@ -35,8 +53,8 @@ export default function ProjectsSection() {
       liveUrl: "https://github.com/keyurkalathiya/ecommerce-platform"
     },
     {
-      id: "proj3",
-      number: "03",
+      id: "proj5",
+      number: "05",
       title: "BLOOD DONATION NETWORK",
       description: "Created an emergency blood donation network platform which matches localized emergency blood requirements with registered local donors in real time.",
       imageUrl: "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?w=800&auto=format&fit=crop&q=80",
@@ -70,7 +88,7 @@ export default function ProjectsSection() {
           </FadeIn>
         </div>
 
-        {/* Responsive Grid Layout (2-3 Column layout requested) */}
+        {/* Responsive Grid Layout (3-Column layout) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, idx) => (
             <FadeIn 

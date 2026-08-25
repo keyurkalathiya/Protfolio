@@ -29,6 +29,7 @@ export function generateLatex(resumeData: {
     name: string;
     tech: string;
     bullets: string[];
+    liveUrl?: string;
   }>;
   certifications: string[];
   languages?: string[];
@@ -49,7 +50,17 @@ export function generateLatex(resumeData: {
       .replace(/•/g, "$\\bullet$");
   };
 
-  const skillsList = resumeData.skills.map(clean).join(", ");
+  let skillsListTex = "";
+  resumeData.skills.forEach((skillLine) => {
+    if (skillLine.includes(":")) {
+      const idx = skillLine.indexOf(":");
+      const cat = skillLine.substring(0, idx).trim();
+      const list = skillLine.substring(idx + 1).trim();
+      skillsListTex += `\\textbf{${clean(cat)}}: {${clean(list)}}\\\\ \\vspace{2pt}\n     `;
+    } else {
+      skillsListTex += `{${clean(skillLine)}}\\\\ \\vspace{2pt}\n     `;
+    }
+  });
 
   let educationTex = "";
   resumeData.education.forEach((edu) => {
@@ -66,7 +77,14 @@ export function generateLatex(resumeData: {
 
   let projectsTex = "";
   resumeData.projects.forEach((proj) => {
-    projectsTex += `\\noindent\\textbf{${clean(proj.name)}} $|$ \\textit{${clean(proj.tech)}}\\\\\n\\begin{itemize}[leftmargin=0.15in, label=$\\bullet$]\n`;
+    const cleanName = clean(proj.name);
+    const cleanTech = clean(proj.tech);
+    let headingLine = `\\noindent\\textbf{${cleanName}}`;
+    if (proj.liveUrl) {
+      const cleanUrl = proj.liveUrl.replace(/^https?:\/\/(www\.)?/, "");
+      headingLine += ` \\hfill \\href{${proj.liveUrl}}{${clean(cleanUrl)}}`;
+    }
+    projectsTex += `${headingLine}\\\\\n\\textit{${cleanTech}}\\\\\n\\begin{itemize}[leftmargin=0.15in, label=$\\bullet$]\n`;
     proj.bullets.forEach((bullet) => {
       projectsTex += `  \\item {${clean(bullet)}}\n`;
     });
@@ -176,8 +194,7 @@ ${educationTex}
 \\section{Technical Skills}
 \\begin{itemize}[leftmargin=0.15in, label={}]
     \\small{\\item{
-     \\textbf{Technologies}: {${skillsList}} \\\\ \\vspace{2pt}
-     \\textbf{Spoken Languages}: {${resumeData.languages ? resumeData.languages.map(clean).join(", ") : "English, Gujarati, Hindi"}}
+     ${skillsListTex}\\textbf{Spoken Languages}: {${resumeData.languages ? resumeData.languages.map(clean).join(", ") : "English, Gujarati, Hindi"}}
     }}
 \\end{itemize}
 

@@ -15,6 +15,7 @@ interface PortfolioProject {
 export default function ProjectCard({ project }: { project: PortfolioProject }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const isLiveSupported = project.id === "supercall-pro" || project.id === "creatorcheck";
 
   // Motion values for tracking exact normalized mouse position inside current element bounds
   const x = useMotionValue(0.5);
@@ -72,7 +73,7 @@ export default function ProjectCard({ project }: { project: PortfolioProject }) 
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full rounded-3xl border border-[#D7E2EA]/10 bg-[#121215] overflow-hidden flex flex-col justify-between hover:border-[#B600A8]/50 transition-colors duration-400 shadow-xl group cursor-pointer"
+      className="relative w-full rounded-3xl border border-[#D7E2EA]/10 bg-[#121215] overflow-hidden flex flex-col justify-between hover:border-[#B600A8]/50 transition-colors duration-400 shadow-xl group"
       style={{ perspective: 1000 }}
     >
       <motion.div
@@ -157,34 +158,36 @@ export default function ProjectCard({ project }: { project: PortfolioProject }) 
           </motion.div>
 
           {/* Shipped/revealed live action button */}
-          <motion.div 
-            className="pt-4 border-t border-white/5 shrink-0 mt-5"
-            animate={{
-              y: isHovered ? -4 : 4,
-              opacity: isHovered ? 1 : 0.85,
-            }}
-            transition={springConfig}
-          >
-            <motion.a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              style={{
-                background: isHovered 
-                  ? "linear-gradient(123deg, #1d0026 7%, #B600A8 45%, #9026d3 72%, #f16405 100%)"
-                  : "linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)",
-                boxShadow: isHovered 
-                  ? "0px 6px 18px rgba(181, 1, 167, 0.45)"
-                  : "0px 2px 4px rgba(181, 1, 167, 0.15)",
+          {isLiveSupported && (
+            <motion.div 
+              className="pt-4 border-t border-white/5 shrink-0 mt-5 w-full"
+              animate={{
+                y: isHovered ? -4 : 4,
+                opacity: isHovered ? 1 : 0.85,
               }}
-              className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-xs font-extrabold uppercase tracking-widest text-white cursor-pointer select-none border border-white/10 w-full transition-all duration-300"
+              transition={springConfig}
             >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>Live Project Demo</span>
-            </motion.a>
-          </motion.div>
+              <motion.a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                style={{
+                  background: isHovered 
+                    ? "linear-gradient(123deg, #1d0026 7%, #B600A8 45%, #9026d3 72%, #f16405 100%)"
+                    : "linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)",
+                  boxShadow: isHovered 
+                    ? "0px 6px 18px rgba(181, 1, 167, 0.45)"
+                    : "0px 2px 4px rgba(181, 1, 167, 0.15)",
+                }}
+                className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-xs font-extrabold uppercase tracking-widest text-white cursor-pointer select-none border border-white/10 w-full transition-all duration-300"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Live Project Demo</span>
+              </motion.a>
+            </motion.div>
+          )}
 
         </div>
       </motion.div>

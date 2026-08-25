@@ -28,6 +28,7 @@ interface ResumeData {
     name: string;
     tech: string;
     bullets: string[];
+    liveUrl?: string;
   }>;
   certifications: string[];
   languages?: string[];
@@ -154,22 +155,45 @@ export function generatePdf(resumeData: ResumeData, filename: string = "Keyur_Ka
 
   // 3. TECHNICAL SKILLS SECTION
   drawSectionTitle("Technical Skills");
-  checkPageBoundary(20);
-  doc.setFont("times", "bold");
-  doc.setFontSize(9.5);
-  doc.setTextColor(15, 23, 42);
-  doc.text("Core Technologies: ", leftMargin, y);
-
-  doc.setFont("times", "normal");
-  doc.setTextColor(51, 65, 85);
-  const skillsString = resumeData.skills.join(", ");
-  const skillsWrapped = doc.splitTextToSize(skillsString, contentWidth - 100);
   
-  skillsWrapped.forEach((line: string, idx: number) => {
-    checkPageBoundary(lineSpacing);
-    const xPos = idx === 0 ? leftMargin + 90 : leftMargin + 90;
-    doc.text(line, xPos, y);
-    y += lineSpacing;
+  resumeData.skills.forEach((skillLine) => {
+    checkPageBoundary(18);
+    if (skillLine.includes(":")) {
+      const colonIdx = skillLine.indexOf(":");
+      const cat = skillLine.substring(0, colonIdx).trim() + ": ";
+      const list = skillLine.substring(colonIdx + 1).trim();
+      
+      doc.setFont("times", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text(cat, leftMargin, y);
+      
+      const catWidth = doc.getTextWidth(cat);
+      doc.setFont("times", "normal");
+      doc.setTextColor(51, 65, 85);
+      
+      const remainingWidth = contentWidth - catWidth;
+      const listWrapped = doc.splitTextToSize(list, remainingWidth);
+      listWrapped.forEach((line: string, idx: number) => {
+        if (idx > 0) {
+          checkPageBoundary(lineSpacing);
+          doc.text(line, leftMargin + catWidth, y);
+        } else {
+          doc.text(line, leftMargin + catWidth, y);
+        }
+        y += lineSpacing;
+      });
+    } else {
+      doc.setFont("times", "normal");
+      doc.setTextColor(51, 65, 85);
+      const lineWrapped = doc.splitTextToSize(skillLine, contentWidth);
+      lineWrapped.forEach((line: string) => {
+        checkPageBoundary(lineSpacing);
+        doc.text(line, leftMargin, y);
+        y += lineSpacing;
+      });
+    }
+    y += 2; // small spacing between groups
   });
   y += 2;
 
@@ -239,9 +263,30 @@ export function generatePdf(resumeData: ResumeData, filename: string = "Keyur_Ka
     doc.setFontSize(10.5);
     doc.setTextColor(15, 23, 42);
     const projNameWrapped = doc.splitTextToSize(proj.name, contentWidth);
-    projNameWrapped.forEach((line: string) => {
+    projNameWrapped.forEach((line: string, index: number) => {
       checkPageBoundary(13);
       doc.text(line, leftMargin, y);
+      
+      if (index === 0 && proj.liveUrl) {
+        doc.setFont("times", "normal");
+        doc.setFontSize(9.5);
+        doc.setTextColor(51, 65, 85);
+        const urlText = proj.liveUrl.replace(/^https?:\/\/(www\.)?/, "");
+        const textWidth = doc.getTextWidth(urlText);
+        const linkX = leftMargin + contentWidth - textWidth;
+        doc.text(urlText, linkX, y);
+        
+        try {
+          doc.link(linkX, y - 8, textWidth, 10, { url: proj.liveUrl });
+        } catch (e) {
+          console.error("Failed to add PDF link:", e);
+        }
+        
+        doc.setFont("times", "bold");
+        doc.setFontSize(10.5);
+        doc.setTextColor(15, 23, 42);
+      }
+      
       y += 12;
     });
 

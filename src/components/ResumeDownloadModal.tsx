@@ -23,8 +23,10 @@ const MASTER_RESUME_DATA = {
   github: "https://github.com/keyurkalathiya",
   summary: "Motivated and detail-oriented Computer Science graduate student with strong foundations in PHP, Python, Java, and full-stack web development. Published researcher with hands-on experience in machine learning and data structures. Proficient in AI-assisted development using tools like Claude and ChatGPT to accelerate coding, debugging, and problem-solving workflows. Eager to contribute technical skills and a problem-solving mindset to a high-impact IT or software engineering role.",
   skills: [
-    "Python", "PHP & APIs", "MySQL & SQL", "React.js", 
-    "Scikit-Learn", "NumPy & Pandas", "Git & GitHub", "AI Vibe Coding"
+    "Programming Languages: Python, PHP, Core Java, JavaScript, HTML5, CSS3",
+    "Machine Learning & Data: Scikit-learn, NumPy, Pandas, Data Structures & Algorithms, Algorithm Analysis",
+    "Databases: MySQL, SQL, Database Systems",
+    "Software Engineering: Object-Oriented Programming, SDLC, Software Testing, Code Review, Agile Methodologies"
   ],
   languages: ["English", "Gujarati", "Hindi"],
   education: [
@@ -56,24 +58,27 @@ const MASTER_RESUME_DATA = {
   },
   projects: [
     {
-      name: "NLP-Based Movie Recommendation System",
-      tech: "Python, NLP, Pandas, Scikit-learn, Machine Learning",
+      name: "SuperCall Pro",
+      tech: "React.js, TypeScript, Tailwind CSS, AI Integrations",
+      liveUrl: "https://www.supercall.pro/",
       bullets: [
-        "Analyzes film datasets, executes automated data cleaning and feature engineering, and implements similarity matrices (Cosine Similarity, TF-IDF Vectorization) to map metadata correlations."
+        "AI-assisted web product developed using modern rapid-development workflows, with emphasis on product UI, responsive web implementation, and a production-facing user experience."
       ]
     },
     {
-      name: "Food & Vegetable eCommerce Website",
-      tech: "PHP, HTML, CSS, JavaScript, MySQL",
+      name: "CreatorCheck",
+      tech: "Python, FastAPI, React.js, Data Analytics",
+      liveUrl: "https://creatorcheck.org",
       bullets: [
-        "Built a responsive full-stack platform managing custom catalog registries. Designed normalized MySQL logical keys, product state controls, customer dashboard components, and dynamic ordering workflows."
+        "Creator-focused platform supporting creator discovery, fraud detection, campaign/ROI analysis, and data-driven workflows. Developed as an AI-assisted product using rapid application development practices."
       ]
     },
     {
-      name: "Blood Donation Management System",
-      tech: "PHP, MySQL, HTML5, CSS3, JavaScript",
+      name: "Personal Portfolio Website",
+      tech: "React.js, Tailwind CSS, Motion, Vercel",
+      liveUrl: "https://portfolio-keyurkalathiya-five.vercel.app",
       bullets: [
-        "Created an emergency blood donation network platform which matches localized emergency blood requirements with registered local donors in real time."
+        "Personal developer portfolio built to showcase software development capabilities, selected products, research, and technical profile; deployed on Vercel."
       ]
     }
   ],

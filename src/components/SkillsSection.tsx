@@ -19,33 +19,46 @@ interface CategoryGroup {
 export default function SkillsSection() {
   const categories: CategoryGroup[] = [
     {
-      categoryName: "Core Web & Backend Engineering",
-      categoryDesc: "Constructing strong database-driven APIs, RESTful services, and highly responsive user interfaces.",
+      categoryName: "Programming Languages",
+      categoryDesc: "Constructing strong database-driven backend architectures and highly responsive client applications.",
       items: [
-        { name: "React.js / TS", icon: <Layers className="w-5 h-5 text-cyan-500" />, level: "Medium" },
-        { name: "PHP Backend", icon: <Terminal className="w-5 h-5 text-purple-500" />, level: "Expert" },
-        { name: "Tailwind & CSS3", icon: <Palette className="w-5 h-5 text-teal-500" />, level: "Beginner" },
-        { name: "Java & OOP Core", icon: <Code className="w-5 h-5 text-blue-500" />, level: "Advanced" },
+        { name: "Python", icon: <Terminal className="w-5 h-5 text-green-500" />, level: "Expert" },
+        { name: "PHP", icon: <Code className="w-5 h-5 text-purple-500" />, level: "Expert" },
+        { name: "Core Java", icon: <Cpu className="w-5 h-5 text-blue-500" />, level: "Advanced" },
+        { name: "JavaScript", icon: <Layers className="w-5 h-5 text-yellow-500" />, level: "Advanced" },
+        { name: "HTML5", icon: <Airplay className="w-5 h-5 text-orange-500" />, level: "Expert" },
+        { name: "CSS3", icon: <Palette className="w-5 h-5 text-pink-500" />, level: "Advanced" },
       ]
     },
     {
-      categoryName: "Data Science & Machine Learning",
-      categoryDesc: "Developing custom statistical predictive algorithms, evaluating model energy parameters, and SQL data schemas.",
+      categoryName: "Machine Learning & Data",
+      categoryDesc: "Developing custom predictive algorithms, analyzing complex structures, and evaluating statistical patterns.",
       items: [
-        { name: "Python Language", icon: <Terminal className="w-5 h-5 text-green-500" />, level: "Expert" },
-        { name: "Scikit-Learn ML", icon: <Cpu className="w-5 h-5 text-yellow-500" />, level: "Advanced" },
-        { name: "NumPy & Pandas", icon: <Layers className="w-5 h-5 text-teal-400" />, level: "Advanced" },
-        { name: "MySQL & SQL DB", icon: <Database className="w-5 h-5 text-[#B600A8]/85" />, level: "Medium" },
+        { name: "Scikit-learn", icon: <Cpu className="w-5 h-5 text-indigo-500" />, level: "Advanced" },
+        { name: "NumPy", icon: <Layers className="w-5 h-5 text-teal-500" />, level: "Advanced" },
+        { name: "Pandas", icon: <Database className="w-5 h-5 text-emerald-500" />, level: "Advanced" },
+        { name: "Data Structures & Algorithms", icon: <Code className="w-5 h-5 text-violet-500" />, level: "Advanced" },
+        { name: "Algorithm Analysis", icon: <Settings className="w-5 h-5 text-rose-500" />, level: "Advanced" },
       ]
     },
     {
-      categoryName: "Tools & AI Productivity Flows",
-      categoryDesc: "Utilizing advanced large language assistant loops, rapid wireframing, and code version controllers.",
+      categoryName: "Databases",
+      categoryDesc: "Designing optimized transactional registries, query systems, and logical relational models.",
       items: [
-        { name: "Claude & ChatGPT", icon: <Sparkles className="w-5 h-5 text-orange-400" />, level: "Expert" },
-        { name: "Git & GitHub", icon: <Github className="w-5 h-5 text-rose-500" />, level: "Medium" },
-        { name: "VS Code Suite", icon: <Code className="w-5 h-5 text-blue-400" />, level: "Advanced" },
-        { name: "Figma Prototyping", icon: <Figma className="w-5 h-5 text-violet-400" />, level: "Medium" },
+        { name: "MySQL", icon: <Database className="w-5 h-5 text-cyan-500" />, level: "Expert" },
+        { name: "SQL", icon: <Terminal className="w-5 h-5 text-amber-500" />, level: "Expert" },
+        { name: "Database Systems", icon: <Layers className="w-5 h-5 text-teal-600" />, level: "Advanced" },
+      ]
+    },
+    {
+      categoryName: "Software Engineering",
+      categoryDesc: "Deploying enterprise lifecycle practices, agile milestones, testing suites, and strict software patterns.",
+      items: [
+        { name: "Object-Oriented Programming", icon: <Code className="w-5 h-5 text-blue-600" />, level: "Advanced" },
+        { name: "SDLC", icon: <Settings className="w-5 h-5 text-indigo-600" />, level: "Advanced" },
+        { name: "Software Testing", icon: <Wrench className="w-5 h-5 text-violet-600" />, level: "Advanced" },
+        { name: "Code Review", icon: <Github className="w-5 h-5 text-rose-600" />, level: "Advanced" },
+        { name: "Agile Methodologies", icon: <Sparkles className="w-5 h-5 text-orange-600" />, level: "Advanced" },
       ]
     }
   ];
