@@ -128,12 +128,61 @@ export default function ResumeDownloadModal({ isOpen, onClose }: ResumeDownloadM
 
   const compileGeneralResume = async () => {
     setIsCompiling(true);
+    setCompileStatus("Checking for uploaded custom resume overrides...");
+    await new Promise((r) => setTimeout(r, 450));
+
+    const checkPaths = ["/Keyur_Kalathiya_Resume.pdf", "/resume.pdf"];
+    let foundStaticPdf = false;
+    let successfulBlobUrl = "";
+    let matchedFilename = "Keyur_Kalathiya_Resume.pdf";
+
+    for (const path of checkPaths) {
+      try {
+        const checkRes = await fetch(path, { method: "HEAD" });
+        if (checkRes.ok) {
+          const contentType = checkRes.headers.get("content-type") || "";
+          if (contentType.toLowerCase().includes("pdf") || path.endsWith(".pdf")) {
+            const getRes = await fetch(path);
+            if (getRes.ok) {
+              const blob = await getRes.blob();
+              successfulBlobUrl = URL.createObjectURL(blob);
+              matchedFilename = path.split("/").pop() || "Keyur_Kalathiya_Resume.pdf";
+              foundStaticPdf = true;
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Could not check path:", path, e);
+      }
+    }
+
+    if (foundStaticPdf && successfulBlobUrl) {
+      setCompileStatus("Custom resume file detected! Downloading custom schematic...");
+      await new Promise((r) => setTimeout(r, 500));
+      
+      const link = document.createElement("a");
+      link.href = successfulBlobUrl;
+      link.setAttribute("download", matchedFilename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(successfulBlobUrl);
+      
+      const latexStr = generateLatex(MASTER_RESUME_DATA);
+      setCurrentLatex(latexStr);
+      
+      setIsCompiling(false);
+      setCompileStatus("");
+      return;
+    }
+
     setCompileStatus("Parsing global portfolio nodes...");
-    await new Promise((r) => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 500));
     setCompileStatus("Converting schema parameters to TeX format...");
-    await new Promise((r) => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 500));
     setCompileStatus("Executing pdflatex compilation pipelines...");
-    await new Promise((r) => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 500));
     
     // Generate LaTeX source code string so user can view/copy
     const latexStr = generateLatex(MASTER_RESUME_DATA);

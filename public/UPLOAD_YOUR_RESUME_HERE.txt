@@ -1,0 +1,9 @@
+Hey Keyur! 
+
+If you want your visitors to download your exact uploaded PDF instead of the dynamically generated resume:
+1. Place your compiled PDF file inside this "public" folder.
+2. Name the file exactly:
+   - "Keyur_Kalathiya_Resume.pdf"
+   - OR "resume.pdf"
+
+The portfolio website will automatically detect your file here and serve it to your visitors! If you delete this file or haven't uploaded it yet, the site will seamlessly fall back to compiling the premium LaTeX-styled resume dynamically.
