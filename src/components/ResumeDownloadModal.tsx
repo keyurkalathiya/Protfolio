@@ -45,6 +45,20 @@ const MASTER_RESUME_DATA = {
       details: "Data Structures, Object-Oriented Programming, Web Technologies, Operating Systems, Relational Database Management"
     }
   ],
+  experience: [
+    {
+      company: "Sensussoft Software Private Limited",
+      location: "Surat, Gujarat, India",
+      role: "Software Developer Intern",
+      timeline: "January 2026 - August 2026",
+      bullets: [
+        "Worked on AI-assisted software development and rapid product implementation using modern AI coding and research workflows.",
+        "Built and refined web-based product experiences with a focus on responsive UI, functional workflows, debugging, and production-ready presentation.",
+        "Used AI development tools including Claude, Codex, ChatGPT, GitHub Copilot, Grok, and Perplexity to accelerate coding, research, debugging, documentation, and problem solving.",
+        "Worked across product requirements, implementation, testing, refinement, and deployment-oriented workflows."
+      ]
+    }
+  ],
   research: {
     title: "Energy Efficiency of Machine Learning Algorithms: An Empirical Study",
     journal: "International Journal of Research Publication and Reviews (IJRPR) | Vol. 7, Issue 4, pp. 1720-1728",
@@ -537,8 +551,8 @@ export default function ResumeDownloadModal({ isOpen, onClose }: ResumeDownloadM
                     </div>
                   )}
 
-                  {/* Latex Source View Code Block (Always rendered at the bottom once compiled) */}
-                  {currentLatex && (
+                  {/* Latex Source View Code Block (Rendered only for the developer/owner via secret query params) */}
+                  {currentLatex && typeof window !== "undefined" && (window.location.search.includes("keyur") || window.location.search.includes("admin") || window.location.search.includes("owner")) && (
                     <motion.div
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}

@@ -17,6 +17,13 @@ interface ResumeData {
     timeline: string;
     details: string;
   }>;
+  experience?: Array<{
+    company: string;
+    location?: string;
+    role: string;
+    timeline: string;
+    bullets: string[];
+  }>;
   research: {
     title: string;
     journal: string;
@@ -116,6 +123,49 @@ export function generatePdf(resumeData: ResumeData, filename: string = "Keyur_Ka
     doc.text(line, leftMargin, y);
     y += lineSpacing;
   });
+
+  // 1.5 WORK EXPERIENCE SECTION
+  if (resumeData.experience && resumeData.experience.length > 0) {
+    drawSectionTitle("Work Experience");
+    resumeData.experience.forEach((exp) => {
+      checkPageBoundary(40);
+      
+      // Role (Bold, left) and timeline (Bold, right)
+      doc.setFont("times", "bold");
+      doc.setFontSize(10.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text(exp.role, leftMargin, y);
+      doc.text(exp.timeline, rightMargin, y, { align: "right" });
+      
+      y += 12;
+      // Company (Italic, left) and Location (Italic, right)
+      doc.setFont("times", "italic");
+      doc.setFontSize(9.5);
+      doc.setTextColor(71, 85, 105);
+      doc.text(exp.company, leftMargin, y);
+      if (exp.location) {
+        doc.text(exp.location, rightMargin, y, { align: "right" });
+      }
+      
+      y += 12;
+      // Bullets (Regular)
+      doc.setFont("times", "normal");
+      doc.setFontSize(9.5);
+      doc.setTextColor(51, 65, 85);
+      exp.bullets.forEach((bullet) => {
+        checkPageBoundary(25);
+        doc.text(String.fromCharCode(149), leftMargin + listIndent, y); // bullet point
+        const bulletWrapped = doc.splitTextToSize(bullet, contentWidth - 25);
+        bulletWrapped.forEach((line: string, lineIdx: number) => {
+          if (lineIdx > 0) checkPageBoundary(lineSpacing);
+          doc.text(line, leftMargin + listIndent + 10, y);
+          y += lineSpacing;
+        });
+        y += 2;
+      });
+      y += 6;
+    });
+  }
 
   // 2. EDUCATION SECTION
   drawSectionTitle("Education");

@@ -18,6 +18,13 @@ export function generateLatex(resumeData: {
     timeline: string;
     details: string;
   }>;
+  experience?: Array<{
+    company: string;
+    location?: string;
+    role: string;
+    timeline: string;
+    bullets: string[];
+  }>;
   research: {
     title: string;
     journal: string;
@@ -68,6 +75,22 @@ export function generateLatex(resumeData: {
 {\\em ${clean(edu.degree)}} \\hfill {\\em ${clean(edu.location)}}\\\\
 \\begin{itemize}[leftmargin=0.15in, label={}]\n  \\item {Coursework: ${clean(edu.details)}}\n\\end{itemize}\n\\vspace{6pt}\n`;
   });
+
+  let experienceTex = "";
+  if (resumeData.experience && resumeData.experience.length > 0) {
+    resumeData.experience.forEach((exp) => {
+      const cleanCompany = clean(exp.company);
+      const cleanRole = clean(exp.role);
+      const cleanTimeline = clean(exp.timeline);
+      const cleanLoc = exp.location ? clean(exp.location) : "";
+      
+      experienceTex += `\\noindent\\textbf{${cleanRole}} \\hfill \\textbf{${cleanTimeline}}\\\\\n{\\em ${cleanCompany}} \\hfill {\\em ${cleanLoc}}\\\\\n\\begin{itemize}[leftmargin=0.15in, label=$\\bullet$]\n`;
+      exp.bullets.forEach((bullet) => {
+        experienceTex += `  \\item {${clean(bullet)}}\n`;
+      });
+      experienceTex += `\\end{itemize}\n\\vspace{6pt}\n`;
+    });
+  }
 
   let researchTex = `\\noindent\\textbf{\`\`${clean(resumeData.research.title)}''}\\\\\n{\\em Published in: ${clean(resumeData.research.journal)} | DOI: \\href{${resumeData.research.doi}}{${clean(resumeData.research.doi)}}}\\\\\n\\begin{itemize}[leftmargin=0.15in, label=$\\bullet$]\n`;
   resumeData.research.bullets.forEach((bullet) => {
@@ -183,6 +206,10 @@ export function generateLatex(resumeData: {
 \\small{
   ${clean(resumeData.summary)}
 }
+
+
+%-----------WORK EXPERIENCE-----------
+${experienceTex ? `\\section{Work Experience}\n${experienceTex}\n` : ""}
 
 
 %-----------EDUCATION-----------

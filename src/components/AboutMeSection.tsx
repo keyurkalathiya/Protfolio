@@ -116,8 +116,7 @@ export default function AboutMeSection({ onOpenResume }: AboutMeSectionProps) {
                   ABOUT <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B600A8] via-[#FF5CE2] to-amber-500">ME</span>
                 </h2>
                 <p className="text-xs sm:text-sm uppercase tracking-widest font-mono text-[#D7E2EA]/50 mt-3 flex items-center gap-2">
-                  <span className="w-2- h-2 px-1 bg-emerald-500/20 text-emerald-400 font-bold rounded-xs">EST. 1999+</span>
-                  <span>• Computer Science Postgrad • AI Intelligence Engineering</span>
+                  <span>Computer Science Postgrad • AI Intelligence Engineering</span>
                 </p>
               </div>
 

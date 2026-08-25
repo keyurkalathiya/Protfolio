@@ -13,6 +13,18 @@ interface WorkExperience {
 export default function ExperienceSection() {
   const experiences: WorkExperience[] = [
     {
+      id: "exp0",
+      company: "SENSUSSOFT SOFTWARE PRIVATE LIMITED",
+      role: "Software Developer Intern",
+      duration: "January 2026 - August 2026",
+      points: [
+        "Worked on AI-assisted software development and rapid product implementation using modern AI coding and research workflows.",
+        "Built and refined web-based product experiences with a focus on responsive UI, functional workflows, debugging, and production-ready presentation.",
+        "Used AI development tools including Claude, Codex, ChatGPT, GitHub Copilot, Grok, and Perplexity to accelerate coding, research, debugging, documentation, and problem solving.",
+        "Worked across product requirements, implementation, testing, refinement, and deployment-oriented workflows."
+      ]
+    },
+    {
       id: "exp1",
       company: "P P SAVANI UNIVERSITY",
       role: "Master of Science (M.Sc.) in Computer Science",
@@ -59,13 +71,13 @@ export default function ExperienceSection() {
           <FadeIn delay={0.1} y={30}>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0C0C0C]/5 border border-[#0C0C0C]/10 text-[#B600A8] text-xs font-semibold uppercase tracking-wider mb-4">
               <Briefcase className="w-3.5 h-3.5" />
-              <span>Education &amp; Research</span>
+              <span>Experience &amp; Journey</span>
             </div>
             <h2 className="text-[#0C0C0C] text-5xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight leading-none mb-4">
-              ACADEMIC TIMELINE
+              PROFESSIONAL JOURNEY
             </h2>
             <p className="text-[#0C0C0C]/60 text-sm sm:text-base max-w-xl mx-auto uppercase tracking-wider font-medium">
-              A chronological overview of computer science degrees and peer-reviewed deep learning studies.
+              A chronological overview of my software engineering experience, research publications, and computer science education.
             </p>
           </FadeIn>
         </div>
